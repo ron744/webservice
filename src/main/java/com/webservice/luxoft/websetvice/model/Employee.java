@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class Employee {
@@ -49,6 +50,19 @@ public class Employee {
 
     public void setDivision(String division) {
         this.division = division;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return age == employee.age && Objects.equals(name, employee.name) && Objects.equals(division, employee.division);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age, division);
     }
 
     @Override
