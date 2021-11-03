@@ -1,5 +1,7 @@
 package com.webservice.luxoft.websetvice.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,8 +14,11 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("age")
     private int age;
+    @JsonProperty("division")
     private String division;
 
     public Employee(){}
