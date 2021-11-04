@@ -1,7 +1,6 @@
 package com.webservice.luxoft.websetvice.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.webservice.luxoft.websetvice.controller.EmployeeController;
 import com.webservice.luxoft.websetvice.model.Employee;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,8 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -32,11 +31,14 @@ public class EmployeeFileWorking {
     }
 
     public void someMethod(String fileName) throws FileNotFoundException, XMLStreamException, IOException {
-        new Thread(new XmlDeserializer(fileName));
+        new Thread(new XmlDeserializer(fileName)).start();
     }
 
     class XmlDeserializer implements Runnable {
         private final String fileName;
+        //если не пустая, создать свое исключение и бросить ее в контроллер
+//        private final Map<UUID, Collection<Exception>>
+
 
         public XmlDeserializer(String fileName) {
             this.fileName = fileName;
