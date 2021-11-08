@@ -1,5 +1,6 @@
 package com.webservice.luxoft.websetvice.controller;
 
+import com.webservice.luxoft.websetvice.ecxeption.MyException;
 import com.webservice.luxoft.websetvice.model.Employee;
 import com.webservice.luxoft.websetvice.service.EmployeeFileWorking;
 import com.webservice.luxoft.websetvice.service.EmployeeCrud;
@@ -7,9 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -54,18 +53,15 @@ public class EmployeeController {
     @GetMapping("/addFromFile")
     public String addEmployeeFromFile(@RequestParam String fileName) {
         try {
-            employeeFileWorking.someMethod(fileName);
+            employeeFileWorking.readXml(fileName);
         } catch (FileNotFoundException e) {
-            log.error("File not found...", e.fillInStackTrace());
+            log.error("File not found...", e);
             return "File not found...";
-        } catch (XMLStreamException e) {
-            log.error("Exception while creating new XMLStreamReader...", e.fillInStackTrace());
-            return "Exception while creating new XMLStreamReader...";
-        } catch (IOException e) {
-            log.error("Exception while reading xml file...", e.fillInStackTrace());
-            return  "Exception while reading xml file...";
+        } catch (MyException e) {
+            log.error("My exception...", e);
+            return "My exception...";
         }
 
-        return "Added all elements to the database.";
+        return "Added all elements to the database";
     }
 }

@@ -1,6 +1,7 @@
 package com.webservice.luxoft.websetvice.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.webservice.luxoft.websetvice.ecxeption.MyException;
 import com.webservice.luxoft.websetvice.model.Employee;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,12 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -24,67 +29,52 @@ public class EmployeeFileWorking {
     private static final String EMPLOYEE = "employee";
     private final EmployeeCrud employeeCrud;
     private final static BlockingQueue<Employee> employeeQueue = new ArrayBlockingQueue<>(200);
+//    private final Map<UUID, Collection<Exception>>
+    private final List<Exception> exceptionList = new ArrayList<>();
 
     @Autowired
     public EmployeeFileWorking(EmployeeCrud employeeCrud) {
         this.employeeCrud = employeeCrud;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.execute(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    employeeCrud.add(employeeQueue.take());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    log.error("Exception while taking employees from queue...", e);
+                }
+            }
+        });
     }
 
-    public void someMethod(String fileName) throws FileNotFoundException, XMLStreamException, IOException {
-        new Thread(new XmlDeserializer(fileName)).start();
+    public void readXml(String fileName) throws FileNotFoundException, MyException {
+        readStream(new FileInputStream("C:\\test\\" + fileName + ".xml"));
     }
 
-    class XmlDeserializer implements Runnable {
-        private final String fileName;
-        //если не пустая, создать свое исключение и бросить ее в контроллер
-//        private final Map<UUID, Collection<Exception>>
+    public void readStream(InputStream employeeXmlStream) throws MyException {
+        try {
+            XmlMapper xm = new XmlMapper();
+            XMLInputFactory xif = XMLInputFactory.newInstance();
 
+            XMLStreamReader xr = xif.createXMLStreamReader(employeeXmlStream);
 
-        public XmlDeserializer(String fileName) {
-            this.fileName = fileName;
-        }
-
-        @Override
-        public void run() {
-            try {
-                XmlMapper xm = new XmlMapper();
-                XMLInputFactory xif = XMLInputFactory.newInstance();
-
-                XMLStreamReader xr = xif.createXMLStreamReader(new FileInputStream("C:\\test\\" + fileName + ".xml"));
-
-                while (xr.hasNext()) {
-                    xr.next();
-                    if (xr.getEventType() == START_ELEMENT) {
-                        if (EMPLOYEE.equals(xr.getLocalName())) {
-                            employeeQueue.put(xm.readValue(xr, Employee.class));
-                            new Thread(new DbWriter()).start();
-                        }
+            while (xr.hasNext()) {
+                xr.next();
+                if (xr.getEventType() == START_ELEMENT) {
+                    if (EMPLOYEE.equals(xr.getLocalName())) {
+                        Employee employee = xm.readValue(xr, Employee.class);
+                        employeeQueue.put(employee);
                     }
                 }
-            } catch (FileNotFoundException e) {
-                log.error("File not found...", e.fillInStackTrace());
-
-            } catch (XMLStreamException e) {
-                log.error("Exception while creating new XMLStreamReader...", e.fillInStackTrace());
-
-            } catch (IOException e) {
-                log.error("Exception while reading xml file...", e.fillInStackTrace());
-
-            } catch (InterruptedException e) {
-                log.error("Exception while putting employees to queue...", e.fillInStackTrace());
             }
+        } catch (XMLStreamException | IOException | InterruptedException e) {
+            exceptionList.add(e);
         }
-    }
 
-    class DbWriter implements Runnable {
+        if (exceptionList.size() > 0)
+            throw new MyException(exceptionList);
 
-        @Override
-        public void run() {
-            try {
-                employeeCrud.add(employeeQueue.take());
-            } catch (InterruptedException e) {
-                log.error("Exception while taking employees from queue...", e.fillInStackTrace());
-            }
-        }
     }
 }
