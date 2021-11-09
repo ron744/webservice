@@ -1,8 +1,8 @@
 package com.webservice.luxoft.websetvice.controller;
 
-import com.webservice.luxoft.websetvice.ecxeption.MyException;
+import com.webservice.luxoft.websetvice.ecxeption.LoadingException;
 import com.webservice.luxoft.websetvice.model.Employee;
-import com.webservice.luxoft.websetvice.service.EmployeeFileWorking;
+import com.webservice.luxoft.websetvice.service.EmployeeLoadService;
 import com.webservice.luxoft.websetvice.service.EmployeeCrud;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,12 @@ public class EmployeeController {
     private static final Logger log = Logger.getLogger(EmployeeController.class);
 
     private final EmployeeCrud employeeCrud;
-    private final EmployeeFileWorking employeeFileWorking;
+    private final EmployeeLoadService employeeLoadService;
 
     @Autowired
-    public EmployeeController(EmployeeCrud employeeCrud, EmployeeFileWorking employeeFileWorking) {
+    public EmployeeController(EmployeeCrud employeeCrud, EmployeeLoadService employeeLoadService) {
         this.employeeCrud = employeeCrud;
-        this.employeeFileWorking = employeeFileWorking;
+        this.employeeLoadService = employeeLoadService;
     }
 
     @GetMapping("/test")
@@ -53,11 +53,11 @@ public class EmployeeController {
     @GetMapping("/addFromFile")
     public String addEmployeeFromFile(@RequestParam String fileName) {
         try {
-            employeeFileWorking.readXml(fileName);
+            employeeLoadService.loadFromXml(fileName);
         } catch (FileNotFoundException e) {
             log.error("File not found...", e);
             return "File not found...";
-        } catch (MyException e) {
+        } catch (LoadingException e) {
             log.error("My exception...", e);
             return "My exception...";
         }
