@@ -73,6 +73,7 @@ public class EmployeeLoadService {
     public void readStream(InputStream employeeXmlStream) throws LoadingException {
         UUID uuid = UUID.randomUUID();
         List<Exception> exceptionList = new ArrayList<>();
+        exceptionsMap.put(uuid, exceptionList);
 
         try {
             XmlMapper xm = new XmlMapper();
@@ -100,10 +101,7 @@ public class EmployeeLoadService {
         }
 
         if (exceptionList.size() > 0) {
-            synchronized (monitor) {
-                exceptionsMap.put(uuid, exceptionList);
-                throw new LoadingException(exceptionsMap);
-            }
+            throw new LoadingException(exceptionList);
         }
     }
 }
