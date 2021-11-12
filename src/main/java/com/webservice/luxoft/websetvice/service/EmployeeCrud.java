@@ -15,6 +15,8 @@ public class EmployeeCrud {
 
     @Autowired
     public EmployeeCrud(EmployeeRepository employeeRepository) {
+//        MessageSender<Employee> employeeMessageSender;
+
         this.employeeRepository = employeeRepository;
     }
 
