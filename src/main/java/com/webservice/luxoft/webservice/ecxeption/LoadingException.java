@@ -1,4 +1,4 @@
-package com.webservice.luxoft.websetvice.ecxeption;
+package com.webservice.luxoft.webservice.ecxeption;
 
 import java.util.List;
 

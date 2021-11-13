@@ -1,7 +1,7 @@
-package com.webservice.luxoft.websetvice.service;
+package com.webservice.luxoft.webservice.service;
 
-import com.webservice.luxoft.websetvice.model.Employee;
-import com.webservice.luxoft.websetvice.repository.EmployeeRepository;
+import com.webservice.luxoft.webservice.model.Employee;
+import com.webservice.luxoft.webservice.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,9 +1,9 @@
-package com.webservice.luxoft.websetvice.service;
+package com.webservice.luxoft.webservice.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.webservice.luxoft.websetvice.ecxeption.LoadingException;
-import com.webservice.luxoft.websetvice.model.Employee;
-import com.webservice.luxoft.websetvice.model.ShellEmployee;
+import com.webservice.luxoft.webservice.ecxeption.LoadingException;
+import com.webservice.luxoft.webservice.model.Employee;
+import com.webservice.luxoft.webservice.model.ShellEmployee;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
