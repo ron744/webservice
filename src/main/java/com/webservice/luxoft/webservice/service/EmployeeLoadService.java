@@ -27,7 +27,6 @@ public class EmployeeLoadService {
     private static final Logger log = Logger.getLogger(EmployeeLoadService.class);
 
     private static final String EMPLOYEE = "employee";
-    private final EmployeeCrud employeeCrud;
     private final static ArrayBlockingQueue<ShellEmployee> employeeQueue = new ArrayBlockingQueue<>(200);
     private final ConcurrentMap<UUID, List<Exception>> exceptionsMap = new ConcurrentHashMap<>();
 
@@ -35,8 +34,6 @@ public class EmployeeLoadService {
 
     @Autowired
     public EmployeeLoadService(EmployeeCrud employeeCrud) {
-        this.employeeCrud = employeeCrud;
-
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         for (int i = 0; i < 10; i++) {
             executorService.execute(() -> {
