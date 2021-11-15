@@ -1,9 +1,9 @@
-package com.webservice.luxoft.websetvice.controller;
+package com.webservice.luxoft.controller;
 
-import com.webservice.luxoft.websetvice.ecxeption.LoadingException;
-import com.webservice.luxoft.websetvice.model.Employee;
-import com.webservice.luxoft.websetvice.service.EmployeeLoadService;
-import com.webservice.luxoft.websetvice.service.EmployeeCrud;
+import com.webservice.luxoft.ecxeption.LoadingException;
+import com.webservice.luxoft.model.Employee;
+import com.webservice.luxoft.service.EmployeeLoadService;
+import com.webservice.luxoft.service.EmployeeCrud;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

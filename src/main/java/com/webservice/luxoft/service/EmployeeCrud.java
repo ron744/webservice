@@ -1,7 +1,7 @@
-package com.webservice.luxoft.websetvice.service;
+package com.webservice.luxoft.service;
 
-import com.webservice.luxoft.websetvice.model.Employee;
-import com.webservice.luxoft.websetvice.repository.EmployeeRepository;
+import com.webservice.luxoft.repository.EmployeeRepository;
+import com.webservice.luxoft.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +12,12 @@ import java.util.Queue;
 @Service
 public class EmployeeCrud {
     private final EmployeeRepository employeeRepository;
+    private final EmployeeMessageSender employeeMessageSender;
 
     @Autowired
-    public EmployeeCrud(EmployeeRepository employeeRepository) {
+    public EmployeeCrud(EmployeeRepository employeeRepository, EmployeeMessageSender employeeMessageSender) {
         this.employeeRepository = employeeRepository;
+        this.employeeMessageSender = employeeMessageSender;
     }
 
     public Employee add(Employee employee) {
@@ -39,6 +41,7 @@ public class EmployeeCrud {
             oldEmployee.setDivision(newEmployee.getDivision());
 
             employeeRepository.save(oldEmployee);
+            employeeMessageSender.send(oldEmployee);
 
             return true;
         } else {

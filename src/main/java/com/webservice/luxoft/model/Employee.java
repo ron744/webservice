@@ -1,4 +1,4 @@
-package com.webservice.luxoft.websetvice.model;
+package com.webservice.luxoft.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

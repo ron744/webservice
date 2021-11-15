@@ -1,6 +1,6 @@
-package com.webservice.luxoft.websetvice.repository;
+package com.webservice.luxoft.repository;
 
-import com.webservice.luxoft.websetvice.model.Employee;
+import com.webservice.luxoft.model.Employee;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
