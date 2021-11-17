@@ -1,6 +1,10 @@
-package com.webservice.luxoft.websetvice.model;
+package com.webservice.luxoft.webservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +13,10 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class Employee {
 
     @Id
@@ -21,39 +29,9 @@ public class Employee {
     @JsonProperty("division")
     private String division;
 
-    public Employee(){}
-
     public Employee(String name, int age, String division) {
         this.name = name;
         this.age = age;
-        this.division = division;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getDivision() {
-        return division;
-    }
-
-    public void setDivision(String division) {
         this.division = division;
     }
 
@@ -68,15 +46,5 @@ public class Employee {
     @Override
     public int hashCode() {
         return Objects.hash(name, age, division);
-    }
-
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                ", division='" + division + '\'' +
-                '}';
     }
 }

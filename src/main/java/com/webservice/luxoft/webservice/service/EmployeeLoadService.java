@@ -1,9 +1,9 @@
-package com.webservice.luxoft.websetvice.service;
+package com.webservice.luxoft.webservice.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.webservice.luxoft.websetvice.ecxeption.LoadingException;
-import com.webservice.luxoft.websetvice.model.Employee;
-import com.webservice.luxoft.websetvice.model.ShellEmployee;
+import com.webservice.luxoft.webservice.ecxeption.LoadingException;
+import com.webservice.luxoft.webservice.model.Employee;
+import com.webservice.luxoft.webservice.model.ShellEmployee;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,6 @@ public class EmployeeLoadService {
     private static final Logger log = Logger.getLogger(EmployeeLoadService.class);
 
     private static final String EMPLOYEE = "employee";
-    private final EmployeeCrud employeeCrud;
     private final static ArrayBlockingQueue<ShellEmployee> employeeQueue = new ArrayBlockingQueue<>(200);
     private final ConcurrentMap<UUID, List<Exception>> exceptionsMap = new ConcurrentHashMap<>();
 
@@ -35,8 +34,6 @@ public class EmployeeLoadService {
 
     @Autowired
     public EmployeeLoadService(EmployeeCrud employeeCrud) {
-        this.employeeCrud = employeeCrud;
-
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         for (int i = 0; i < 10; i++) {
             executorService.execute(() -> {

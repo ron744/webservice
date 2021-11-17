@@ -1,4 +1,4 @@
-package com.websetvice.luxoft.websetvice;
+package com.websetvice.luxoft.webservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

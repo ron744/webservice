@@ -4,7 +4,7 @@
     <persistence-units>
       <persistence-unit name="Default">
         <packages>
-          <package value="com.websetvice.luxoft.websetvice" />
+          <package value="com.websetvice.luxoft.webservice" />
         </packages>
       </persistence-unit>
     </persistence-units>
