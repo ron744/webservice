@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<employees>
+    <employee>
+        <name>Irina</name>
+        <age>75</age>
+        <division>very old division</division>
+    </employee>
+    <employee>
+        <name>Irina</name>
+        <age>37</age>
+        <division>very old division</division>
+    </employee>
+    <employee>
+        <name>Ivan</name>
+        <age>36</age>
+        <division>new division</division>
+    </employee>
+    <employee>
+        <name>Anna</name>
+        <age>39</age>
+        <division>new division</division>
+    </employee>
+    <employee>
+        <name>Alisa</name>
+        <age>29</age>
+        <division>very old division</division>
+    </employee>
+    <employee>
+        <name>Ivan</name>
+        <age>39</age>
+        <division>very old division</division>
+    </employee>
+    <employee>
+        <name>Andrey</name>
+        <age>28</age>
+        <division>new division</division>
+    </employee>
+</employees>
