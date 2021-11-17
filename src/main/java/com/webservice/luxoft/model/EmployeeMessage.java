@@ -1,5 +1,7 @@
 package com.webservice.luxoft.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,8 +12,10 @@ public class EmployeeMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
+    @JsonProperty("employee")
     private String employee;
+    @JsonProperty("sendDate")
     private String sendDate;
 
     public EmployeeMessage() {}
@@ -19,6 +23,14 @@ public class EmployeeMessage {
     public EmployeeMessage(String employee, String sendDate) {
         this.employee = employee;
         this.sendDate = sendDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmployee() {
@@ -40,7 +52,8 @@ public class EmployeeMessage {
     @Override
     public String toString() {
         return "EmployeeMessage{" +
-                "employee=" + employee +
+                "id=" + id +
+                ", employee='" + employee + '\'' +
                 ", sendDate='" + sendDate + '\'' +
                 '}';
     }

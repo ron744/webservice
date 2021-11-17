@@ -1,9 +1,11 @@
 package com.webservice.luxoft.controller;
 
-import com.webservice.luxoft.model.EmployeeMessage;
 import com.webservice.luxoft.service.EmployeeMessageSender;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "api/employeeMessage")
@@ -25,13 +27,8 @@ public class EmployeeMessageController {
         return employeeMessageSender.getEmployeeMessageById(id);
     }
 
-    @PostMapping("/addMessage")
-    public EmployeeMessage addEmployeeMessage(@RequestBody EmployeeMessage employeeMessage) {
-        return employeeMessageSender.save(employeeMessage);
-    }
-
-    @GetMapping("/count")
-    public String getCount() {
-        return String.valueOf(employeeMessageSender.count());
+    @GetMapping("/getAll")
+    public void getAllMessages() {
+        employeeMessageSender.findAll();
     }
 }

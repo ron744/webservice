@@ -21,7 +21,9 @@ public class EmployeeCrud {
     }
 
     public Employee add(Employee employee) {
-        return employeeRepository.save(employee);
+        Employee savedEmployee = employeeRepository.save(employee);
+        employeeMessageSender.send(savedEmployee);
+        return savedEmployee;
     }
 
     public Queue<Employee> addAll(Queue<Employee> employees) {
