@@ -7,28 +7,33 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.webservice.luxoft.model.Employee;
 import com.webservice.luxoft.model.EmployeeMessage;
 import com.webservice.luxoft.repository.EmployeeMessageRepository;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ArrayBlockingQueue;
 
-// в рамках этого класса нужно создать messageSender, который будет проверять изменения таблицы EmployeeMessage и отправлять сообщение в kafka
 @Service
 public class EmployeeMessageSender implements MessageSender<Employee> {
     private final static Logger log = Logger.getLogger(EmployeeMessageSender.class);
+    private final static String TOPIC = "test";
     private final EmployeeMessageRepository employeeMessageRepository;
-//    private final MessageSender<EmployeeMessage> sender;
+    private final KafkaTemplate kafkaTemplate;
+    private final ArrayBlockingQueue<EmployeeMessage> senderList = new ArrayBlockingQueue<>(200);
 
     @Autowired
-    public EmployeeMessageSender(EmployeeMessageRepository employeeMessageRepository) {
+    public EmployeeMessageSender(EmployeeMessageRepository employeeMessageRepository, KafkaTemplate kafkaTemplate) {
         this.employeeMessageRepository = employeeMessageRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
-    // вместо employee в employeeMessage нужно сохранять json
     @Override
     public void send(Employee employee) {
         LocalDateTime now = LocalDateTime.now();
@@ -36,12 +41,14 @@ public class EmployeeMessageSender implements MessageSender<Employee> {
         EmployeeMessage employeeMessage = new EmployeeMessage(objectToJson(employee), now.toString());
 
         employeeMessageRepository.save(employeeMessage);
+
+        senderList.add(employeeMessage);
     }
 
     @Scheduled(fixedDelay = 3000)
-    private void scanNewEmployee() {
-        // планировщик должен запускаться раз в 3 секунды, сканировать таблицу бд на предмет новых записей и, если они есть отправлять их в очередь Кафка
+    private void scanNewEmployee() throws InterruptedException {
         System.out.println("scheduler");
+        kafkaTemplate.send(TOPIC, senderList.take().toString());
     }
 
     private String objectToJson(Employee employee) {
@@ -66,5 +73,10 @@ public class EmployeeMessageSender implements MessageSender<Employee> {
         for (EmployeeMessage message : messageList) {
             System.out.println(message);
         }
+    }
+
+    @Bean
+    public NewTopic topic() {
+        return new NewTopic("test", 3, (short) 1);
     }
 }
