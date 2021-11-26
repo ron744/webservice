@@ -7,18 +7,16 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.webservice.luxoft.model.Employee;
 import com.webservice.luxoft.model.EmployeeMessage;
 import com.webservice.luxoft.repository.EmployeeMessageRepository;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ArrayBlockingQueue;
 
 @Service
 public class EmployeeMessageSender implements MessageSender<Employee> {
@@ -26,7 +24,6 @@ public class EmployeeMessageSender implements MessageSender<Employee> {
     private final static String TOPIC = "test";
     private final EmployeeMessageRepository employeeMessageRepository;
     private final KafkaTemplate kafkaTemplate;
-    private final ArrayBlockingQueue<EmployeeMessage> senderList = new ArrayBlockingQueue<>(200);
 
     @Autowired
     public EmployeeMessageSender(EmployeeMessageRepository employeeMessageRepository, KafkaTemplate kafkaTemplate) {
@@ -38,17 +35,22 @@ public class EmployeeMessageSender implements MessageSender<Employee> {
     public void send(Employee employee) {
         LocalDateTime now = LocalDateTime.now();
 
-        EmployeeMessage employeeMessage = new EmployeeMessage(objectToJson(employee), now.toString());
+        EmployeeMessage employeeMessage = new EmployeeMessage(objectToJson(employee), now.toString(), false);
 
         employeeMessageRepository.save(employeeMessage);
-
-        senderList.add(employeeMessage);
     }
 
     @Scheduled(fixedDelay = 3000)
-    private void scanNewEmployee() throws InterruptedException {
+    @Transactional
+    private void scanNewEmployee() {
         System.out.println("scheduler");
-        kafkaTemplate.send(TOPIC, senderList.take().toString());
+
+        EmployeeMessage em = employeeMessageRepository.findFirstBySent(false);
+        if (em != null) {
+            em.setSent(true);
+            employeeMessageRepository.save(em);
+            kafkaTemplate.send(TOPIC, em.toString());
+        }
     }
 
     private String objectToJson(Employee employee) {
@@ -73,10 +75,5 @@ public class EmployeeMessageSender implements MessageSender<Employee> {
         for (EmployeeMessage message : messageList) {
             System.out.println(message);
         }
-    }
-
-    @Bean
-    public NewTopic topic() {
-        return new NewTopic("test", 3, (short) 1);
     }
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmployeeMessageRepository extends CrudRepository<EmployeeMessage, Long> {
+    EmployeeMessage findFirstBySent(boolean sent);
 }
