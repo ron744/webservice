@@ -1,0 +1,116 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: DEV-1
+      author: leonov
+      changes:
+        - createTable:
+            tableName: employees
+            columns:
+              - column:
+                  name: employee_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: employee_pk
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    unique: false
+                    nullable: false
+              - column:
+                  name: age
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: department_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: integer
+                  constraints:
+                    nullable: false
+              - addForeignKeyConstraint:
+                  baseTableName: employee
+                  baseColumnNames: department_id
+                  referencedTableName: department
+                  referencedColumnNames: name
+                  constraintName: employee_department_fk
+
+
+  - changeSet:
+      id: DEV-2
+      author: leonov
+      changes:
+        - createTable:
+            tableName: departments
+            columns:
+              - column:
+                  name: department_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: department_pk
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_department_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+
+  - changeSet:
+      id: DEV-3
+      author: leonov
+      changes:
+        - createTable:
+            tableName: employee_messages
+            columns:
+              - column:
+                  name: employee_message_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: employee_message_pk
+                    nullable: false
+              - column:
+                  name: employee_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: send_date
+                  type: timestamp without time zone
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sent
+                  type: boolean
+                  defaultValue: false
+                  constraints:
+                    nullable: false

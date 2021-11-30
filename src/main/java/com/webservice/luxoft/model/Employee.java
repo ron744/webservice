@@ -6,13 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "employees")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,18 +19,24 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "employee_id")
     private Long id;
     @JsonProperty("name")
     private String name;
     @JsonProperty("age")
     private int age;
-    @JsonProperty("division")
-    private String division;
+    @JsonProperty("department")
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+    @Version
+    @JsonProperty("version")
+    private Integer version;
 
-    public Employee(String name, int age, String division) {
+    public Employee(String name, int age, Department department) {
         this.name = name;
         this.age = age;
-        this.division = division;
+        this.department = department;
     }
 
     @Override
@@ -40,11 +44,11 @@ public class Employee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return age == employee.age && Objects.equals(name, employee.name) && Objects.equals(division, employee.division);
+        return age == employee.age && Objects.equals(name, employee.name) && Objects.equals(department, employee.department);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, division);
+        return Objects.hash(name, age, department);
     }
 }

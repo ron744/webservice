@@ -40,7 +40,7 @@ public class EmployeeCrud {
         if (!oldEmployee.equals(newEmployee)) {
             oldEmployee.setAge(newEmployee.getAge());
             oldEmployee.setName(newEmployee.getName());
-            oldEmployee.setDivision(newEmployee.getDivision());
+            oldEmployee.setDepartment(newEmployee.getDepartment());
 
             employeeRepository.save(oldEmployee);
             employeeMessageSender.send(oldEmployee);

@@ -3,13 +3,12 @@ package com.webservice.luxoft.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity
+@Table(name = "employee_messages")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,16 +17,21 @@ public class EmployeeMessage implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "employee_message_id")
     private Long id;
-    @JsonProperty("employee")
-    private String employee;
+    @JsonProperty("idEmployee")
+    @Column(name = "employee_id")
+    private Long idEmployee;
+    @JsonProperty("version")
+    private Integer version;
     @JsonProperty("sendDate")
-    private String sendDate;
+    private Timestamp sendDate;
     @JsonProperty("sent")
     private boolean sent;
 
-    public EmployeeMessage(String employee, String sendDate, boolean sent) {
-        this.employee = employee;
+    public EmployeeMessage(Long idEmployee, Integer version, Timestamp sendDate, boolean sent) {
+        this.idEmployee = idEmployee;
+        this.version = version;
         this.sendDate = sendDate;
         this.sent = sent;
     }

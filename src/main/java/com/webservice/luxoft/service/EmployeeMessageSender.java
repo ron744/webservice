@@ -14,7 +14,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -33,9 +34,9 @@ public class EmployeeMessageSender implements MessageSender<Employee> {
 
     @Override
     public void send(Employee employee) {
-        LocalDateTime now = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.from(ZonedDateTime.now().toInstant());
 
-        EmployeeMessage employeeMessage = new EmployeeMessage(objectToJson(employee), now.toString(), false);
+        EmployeeMessage employeeMessage = new EmployeeMessage(employee.getId(), employee.getVersion(), timestamp, false);
 
         employeeMessageRepository.save(employeeMessage);
     }
