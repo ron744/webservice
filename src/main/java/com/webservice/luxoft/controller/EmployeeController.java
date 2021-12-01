@@ -2,6 +2,7 @@ package com.webservice.luxoft.controller;
 
 import com.webservice.luxoft.ecxeption.LoadingException;
 import com.webservice.luxoft.model.Employee;
+import com.webservice.luxoft.model.EmployeeView;
 import com.webservice.luxoft.service.EmployeeLoadService;
 import com.webservice.luxoft.service.EmployeeCrud;
 import org.apache.log4j.Logger;
@@ -31,8 +32,8 @@ public class EmployeeController {
     }
 
     @PostMapping("/add")
-    public Employee addEmployee(@RequestBody Employee employee) {
-        return employeeCrud.add(employee);
+    public Employee addEmployee(@RequestBody EmployeeView employeeView) {
+        return employeeCrud.add(employeeView).orElse(null);
     }
 
     @GetMapping("/getByName")

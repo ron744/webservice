@@ -2,7 +2,7 @@ package com.webservice.luxoft.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.webservice.luxoft.ecxeption.LoadingException;
-import com.webservice.luxoft.model.Employee;
+import com.webservice.luxoft.model.EmployeeView;
 import com.webservice.luxoft.model.ShellEmployee;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,6 @@ public class EmployeeLoadService {
     private static final Logger log = Logger.getLogger(EmployeeLoadService.class);
 
     private static final String EMPLOYEE = "employee";
-    private final EmployeeCrud employeeCrud;
     private final static ArrayBlockingQueue<ShellEmployee> employeeQueue = new ArrayBlockingQueue<>(200);
     private final ConcurrentMap<UUID, List<Exception>> exceptionsMap = new ConcurrentHashMap<>();
 
@@ -35,7 +34,6 @@ public class EmployeeLoadService {
 
     @Autowired
     public EmployeeLoadService(EmployeeCrud employeeCrud) {
-        this.employeeCrud = employeeCrud;
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         for (int i = 0; i < 10; i++) {
@@ -45,8 +43,8 @@ public class EmployeeLoadService {
 
                     try {
                         shellEmployee = employeeQueue.take();
-                        Employee employee = shellEmployee.getEmployee();
-                        employeeCrud.add(employee);
+                        EmployeeView employeeView = shellEmployee.getEmployeeView();
+                        employeeCrud.add(employeeView);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         log.error("Exception while taking employees from queue...", e);
@@ -85,13 +83,13 @@ public class EmployeeLoadService {
                 xr.next();
                 if (xr.getEventType() == START_ELEMENT) {
                     if (EMPLOYEE.equals(xr.getLocalName())) {
-                        Employee employee = null;
+                        EmployeeView employeeView = null;
                         try {
-                            employee = xm.readValue(xr, Employee.class);
+                            employeeView = xm.readValue(xr, EmployeeView.class);
                         } catch (IOException e) {
                             exceptionList.add(e);
                         }
-                        ShellEmployee shellEmployee = new ShellEmployee(uuid, employee);
+                        ShellEmployee shellEmployee = new ShellEmployee(uuid, employeeView);
                         employeeQueue.put(shellEmployee);
                     }
                 }

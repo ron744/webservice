@@ -1,5 +1,7 @@
 package com.webservice.luxoft.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @ToString
+@JsonIgnoreProperties(value = { "department" })
 public class Employee {
 
     @Id

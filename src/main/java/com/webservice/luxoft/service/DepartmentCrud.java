@@ -1,11 +1,13 @@
 package com.webservice.luxoft.service;
 
 import com.webservice.luxoft.model.Department;
+import com.webservice.luxoft.model.DepartmentView;
 import com.webservice.luxoft.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class DepartmentCrud {
@@ -16,19 +18,31 @@ public class DepartmentCrud {
         this.departmentRepository = departmentRepository;
     }
 
-    public Department add(Department department) {
+    public Department add(DepartmentView departmentView) {
+        if (departmentView.getParentDepartmentId() != null) {
+            Optional<Department> parentDepOpt = departmentRepository.findById(departmentView.getParentDepartmentId());
+
+            Department department = parentDepOpt
+                    .map(value -> new Department(departmentView.getName(), departmentView.getDescription(), value, null))
+                    .orElseGet(() -> new Department(departmentView.getName(), departmentView.getDescription(), null, null));
+
+            return departmentRepository.save(department);
+        }
+
+        Department department = new Department(departmentView.getName(), departmentView.getDescription(), null, null);
         return departmentRepository.save(department);
+
     }
 
     public Department getByName(String name) {
-        return departmentRepository.findById(name).orElseThrow(NoSuchElementException::new);
+        return departmentRepository.findByName(name).orElseThrow(NoSuchElementException::new);
     }
 
     public boolean update(String name, Department newDepartment) {
-        Department oldDepartment = departmentRepository.findById(name).orElseThrow(NoSuchElementException::new);
+        Department oldDepartment = departmentRepository.findByName(name).orElseThrow(NoSuchElementException::new);
         if (!oldDepartment.equals(newDepartment)) {
             oldDepartment.setDescription(newDepartment.getDescription());
-//            oldDepartment.setParent(newDepartment.getParent());
+            oldDepartment.setMainDepartment(newDepartment.getMainDepartment());
             oldDepartment.setEmployees(newDepartment.getEmployees());
 
             departmentRepository.save(oldDepartment);
@@ -39,7 +53,11 @@ public class DepartmentCrud {
         }
     }
 
+    public Department getById(Long id) {
+        return departmentRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    }
+
     public void delete(String name) {
-        departmentRepository.deleteById(name);
+//        departmentRepository.deleteByName(name);
     }
 }

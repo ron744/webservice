@@ -1,10 +1,10 @@
 package com.webservice.luxoft;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class ConsumerClass {
     private final static Logger log = Logger.getLogger(ConsumerClass.class);
 

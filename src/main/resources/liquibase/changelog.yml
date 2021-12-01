@@ -37,10 +37,10 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - addForeignKeyConstraint:
-                  baseTableName: employee
+                  baseTableName: employees
                   baseColumnNames: department_id
-                  referencedTableName: department
-                  referencedColumnNames: name
+                  referencedTableName: departments
+                  referencedColumnNames: department_id
                   constraintName: employee_department_fk
 
 
@@ -74,7 +74,7 @@ databaseChangeLog:
                   name: parent_department_id
                   type: bigint
                   constraints:
-                    nullable: false
+                    nullable: true
 
 
   - changeSet:
@@ -114,3 +114,21 @@ databaseChangeLog:
                   defaultValue: false
                   constraints:
                     nullable: false
+
+
+  - changeSet:
+      id: DEV-4
+      author: leonov
+      changes:
+        - createSequence:
+            cacheSize: 371717
+            catalogName: cat
+            cycle: true
+            dataType: int
+            incrementBy: 1
+            maxValue: 1000
+            minValue: 0
+            ordered: true
+            schemaName: public
+            sequenceName: hibernate_sequence
+            startValue: 0
