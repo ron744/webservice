@@ -2,7 +2,8 @@ package com.webservice.luxoft.controller;
 
 import com.webservice.luxoft.ecxeption.LoadingException;
 import com.webservice.luxoft.model.Employee;
-import com.webservice.luxoft.model.EmployeeView;
+import com.webservice.luxoft.model.EmployeeRequest;
+import com.webservice.luxoft.model.EmployeeResponse;
 import com.webservice.luxoft.service.EmployeeLoadService;
 import com.webservice.luxoft.service.EmployeeCrud;
 import org.apache.log4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping(path = "api/employee")
@@ -32,12 +34,19 @@ public class EmployeeController {
     }
 
     @PostMapping("/add")
-    public Employee addEmployee(@RequestBody EmployeeView employeeView) {
-        return employeeCrud.add(employeeView).orElse(null);
+    public EmployeeResponse addEmployee(@RequestBody EmployeeRequest employeeRequest) {
+        try {
+            EmployeeResponse employeeResponse = employeeCrud.add(employeeRequest);
+            return employeeResponse;
+        } catch (NoSuchElementException e) {
+            log.error("File not found...", e);
+            return new EmployeeResponse();
+        }
+//        return employeeCrud.add(employeeRequest).orElseThrow(NoClassDefFoundError::new);
     }
 
     @GetMapping("/getByName")
-    public List<Employee> getEmployeeByName(@RequestParam String name) {
+    public List<EmployeeResponse> getEmployeeByName(@RequestParam String name) {
         return employeeCrud.getByName(name);
     }
 

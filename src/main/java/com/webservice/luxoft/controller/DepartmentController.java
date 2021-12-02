@@ -1,7 +1,8 @@
 package com.webservice.luxoft.controller;
 
 import com.webservice.luxoft.model.Department;
-import com.webservice.luxoft.model.DepartmentView;
+import com.webservice.luxoft.model.DepartmentRequest;
+import com.webservice.luxoft.model.DepartmentResponse;
 import com.webservice.luxoft.service.DepartmentCrud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,8 @@ public class DepartmentController {
     }
 
     @PostMapping("/add")
-    public Department add(@RequestBody DepartmentView departmentView) {
-        return departmentCrud.add(departmentView);
+    public DepartmentResponse add(@RequestBody DepartmentRequest departmentRequest) {
+        return departmentCrud.add(departmentRequest);
     }
 
     @GetMapping("/getByName")

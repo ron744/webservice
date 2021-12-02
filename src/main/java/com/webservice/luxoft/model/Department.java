@@ -26,7 +26,7 @@ public class Department {
     @JoinColumn(name = "parent_department_id")
     private Department mainDepartment;
 
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<Employee> employees;
 
     public Department(String name, String description, Department mainDepartment, Collection<Employee> employees) {

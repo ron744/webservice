@@ -1,7 +1,8 @@
 package com.webservice.luxoft.service;
 
 import com.webservice.luxoft.model.Department;
-import com.webservice.luxoft.model.EmployeeView;
+import com.webservice.luxoft.model.EmployeeRequest;
+import com.webservice.luxoft.model.EmployeeResponse;
 import com.webservice.luxoft.repository.EmployeeRepository;
 import com.webservice.luxoft.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeCrud {
@@ -25,25 +27,29 @@ public class EmployeeCrud {
         this.departmentCrud = departmentCrud;
     }
 
-    public Optional<Employee> add(EmployeeView employeeView) {
-        Department department = departmentCrud.getById(employeeView.getDepartmentId());
+    public EmployeeResponse add(EmployeeRequest employeeRequest) throws NoSuchElementException {
+        //TODO добавить обработку ошибок, если департамент не найден
+        Department department = departmentCrud.getById(employeeRequest.getDepartmentId());
         if (department != null) {
-            Employee employee = new Employee(employeeView.getName(), employeeView.getAge(), department);
+            Employee employee = new Employee(employeeRequest.getName(), employeeRequest.getAge(), department);
 
             Employee savedEmployee = employeeRepository.save(employee);
             employeeMessageSender.send(savedEmployee);
-            return Optional.of(savedEmployee);
+            return new EmployeeResponse(employee);
         }
 
-        return Optional.empty();
+        return new EmployeeResponse();
     }
 
     public Queue<Employee> addAll(Queue<Employee> employees) {
         return (Queue<Employee>) employeeRepository.saveAll(employees);
     }
 
-    public List<Employee> getByName(String name) {
-        return employeeRepository.findByNameLike(name);
+    public List<EmployeeResponse> getByName(String name) {
+        return employeeRepository.findByNameLike(name)
+                .stream()
+                .map(EmployeeResponse::new)
+                .collect(Collectors.toList());
     }
 
     public boolean update(Long id, Employee newEmployee) {

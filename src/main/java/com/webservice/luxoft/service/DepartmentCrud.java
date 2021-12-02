@@ -1,7 +1,8 @@
 package com.webservice.luxoft.service;
 
 import com.webservice.luxoft.model.Department;
-import com.webservice.luxoft.model.DepartmentView;
+import com.webservice.luxoft.model.DepartmentRequest;
+import com.webservice.luxoft.model.DepartmentResponse;
 import com.webservice.luxoft.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,20 +19,23 @@ public class DepartmentCrud {
         this.departmentRepository = departmentRepository;
     }
 
-    public Department add(DepartmentView departmentView) {
-        if (departmentView.getParentDepartmentId() != null) {
-            Optional<Department> parentDepOpt = departmentRepository.findById(departmentView.getParentDepartmentId());
+    public DepartmentResponse add(DepartmentRequest departmentRequest) {
+
+        if (departmentRequest.getParentDepartmentId() != null) {
+            Optional<Department> parentDepOpt = departmentRepository.findById(departmentRequest.getParentDepartmentId());
 
             Department department = parentDepOpt
-                    .map(value -> new Department(departmentView.getName(), departmentView.getDescription(), value, null))
-                    .orElseGet(() -> new Department(departmentView.getName(), departmentView.getDescription(), null, null));
+                    .map(value -> new Department(departmentRequest.getName(), departmentRequest.getDescription(), value, null))
+                    .orElseGet(() -> new Department(departmentRequest.getName(), departmentRequest.getDescription(), null, null));
 
-            return departmentRepository.save(department);
+            departmentRepository.save(department);
+            return new DepartmentResponse(department);
         }
 
-        Department department = new Department(departmentView.getName(), departmentView.getDescription(), null, null);
-        return departmentRepository.save(department);
+        Department department = new Department(departmentRequest.getName(), departmentRequest.getDescription(), null, null);
+        departmentRepository.save(department);
 
+        return new DepartmentResponse(department);
     }
 
     public Department getByName(String name) {

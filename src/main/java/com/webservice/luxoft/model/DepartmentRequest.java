@@ -5,10 +5,9 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
-public class EmployeeView {
+public class DepartmentRequest {
     private String name;
-    private int age;
-    private Long departmentId;
+    private String description;
+    private Long parentDepartmentId;
 }

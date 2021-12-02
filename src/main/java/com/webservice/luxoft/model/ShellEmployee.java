@@ -13,5 +13,5 @@ import java.util.UUID;
 @ToString
 public class ShellEmployee {
     private UUID uuid;
-    private EmployeeView employeeView;
+    private EmployeeRequest employeeRequest;
 }
