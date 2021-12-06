@@ -49,7 +49,7 @@ public class EmployeeCrudTest {
         assertThat(true).isNotEqualTo(employeeCrud.update(id, newEmployee));
     }
 
-//    @Test
+    @Test
     public void updateNewEmployeeIsEmpty() {
         Mockito.doReturn(Optional.of(oldEmployee)).when(employeeRepository).findById(id);
 

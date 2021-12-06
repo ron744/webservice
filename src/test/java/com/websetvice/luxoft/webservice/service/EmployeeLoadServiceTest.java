@@ -37,14 +37,7 @@ public class EmployeeLoadServiceTest {
     public void readStreamFalse() throws LoadingException, InterruptedException  {
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("employees.xml");
 
-//        CountDownLatch countDownLatch = new CountDownLatch(1);
-//        Mockito.doAnswer(answer -> {
-//            countDownLatch.countDown();
-//            return answer.callRealMethod();
-//        }).when(employeeCrud).add(any(Employee.class));
-
         service.readStream(is);
-//        countDownLatch.await(1, TimeUnit.MINUTES);
 
         verify(employeeCrud, times(0)).add(new Employee("Ivan", 38, "new division"));
     }
