@@ -8,11 +8,13 @@ import com.webservice.luxoft.service.EmployeeLoadService;
 import com.webservice.luxoft.service.EmployeeCrud;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path = "api/employee")
@@ -21,11 +23,13 @@ public class EmployeeController {
 
     private final EmployeeCrud employeeCrud;
     private final EmployeeLoadService employeeLoadService;
+    private final Converter converter;
 
     @Autowired
-    public EmployeeController(EmployeeCrud employeeCrud, EmployeeLoadService employeeLoadService) {
+    public EmployeeController(EmployeeCrud employeeCrud, EmployeeLoadService employeeLoadService, Converter converter) {
         this.employeeCrud = employeeCrud;
         this.employeeLoadService = employeeLoadService;
+        this.converter = converter;
     }
 
     @GetMapping("/test")
@@ -36,13 +40,14 @@ public class EmployeeController {
     @PostMapping("/add")
     public EmployeeResponse addEmployee(@RequestBody EmployeeRequest employeeRequest) {
         try {
-            EmployeeResponse employeeResponse = employeeCrud.add(employeeRequest);
-            return employeeResponse;
+            Employee employee = converter.requestConvert(employeeRequest);
+            ResponseEntity<Employee> response = employeeCrud.add(employee);
+            return new EmployeeResponse(Objects.requireNonNull(response.getBody()));
+
         } catch (NoSuchElementException e) {
-            log.error("File not found...", e);
-            return new EmployeeResponse();
+            log.error("Department not found...", e);
+            throw e;
         }
-//        return employeeCrud.add(employeeRequest).orElseThrow(NoClassDefFoundError::new);
     }
 
     @GetMapping("/getByName")
@@ -51,8 +56,8 @@ public class EmployeeController {
     }
 
     @PutMapping("/updateById")
-    public String updateEmployee(@RequestParam Long id, @RequestBody Employee newEmployee) {
-        return employeeCrud.update(id, newEmployee) ? "Object has been updated" : "Object is equal to the object in the database";
+    public ResponseEntity<String> updateEmployee(@RequestParam Long id, @RequestBody Employee newEmployee) {
+        return employeeCrud.update(id, newEmployee) ? ResponseEntity.ok("Object has been updated") : ResponseEntity.status(409).body("Object is equal to the object in the database");
     }
 
     @DeleteMapping("/deleteById")
@@ -61,17 +66,17 @@ public class EmployeeController {
     }
 
     @GetMapping("/addFromFile")
-    public String addEmployeeFromFile(@RequestParam String fileName) {
+    public ResponseEntity<String> addEmployeeFromFile(@RequestParam String fileName) {
         try {
             employeeLoadService.loadFromXml(fileName);
         } catch (FileNotFoundException e) {
             log.error("File not found...", e);
-            return "File not found...";
+            return ResponseEntity.status(404).body("File not found...");
         } catch (LoadingException e) {
             log.error("My exception...", e);
-            return "My exception...";
+            return ResponseEntity.status(500).body("My exception...");
         }
 
-        return "Added all elements to the database";
+        return ResponseEntity.ok("Added all elements to the database");
     }
 }

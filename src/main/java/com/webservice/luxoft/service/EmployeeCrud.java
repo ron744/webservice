@@ -1,16 +1,14 @@
 package com.webservice.luxoft.service;
 
-import com.webservice.luxoft.model.Department;
-import com.webservice.luxoft.model.EmployeeRequest;
+import com.webservice.luxoft.model.Employee;
 import com.webservice.luxoft.model.EmployeeResponse;
 import com.webservice.luxoft.repository.EmployeeRepository;
-import com.webservice.luxoft.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
@@ -27,18 +25,10 @@ public class EmployeeCrud {
         this.departmentCrud = departmentCrud;
     }
 
-    public EmployeeResponse add(EmployeeRequest employeeRequest) throws NoSuchElementException {
-        //TODO добавить обработку ошибок, если департамент не найден
-        Department department = departmentCrud.getById(employeeRequest.getDepartmentId());
-        if (department != null) {
-            Employee employee = new Employee(employeeRequest.getName(), employeeRequest.getAge(), department);
-
-            Employee savedEmployee = employeeRepository.save(employee);
-            employeeMessageSender.send(savedEmployee);
-            return new EmployeeResponse(employee);
-        }
-
-        return new EmployeeResponse();
+    public ResponseEntity<Employee> add(Employee employee) throws NoSuchElementException {
+        Employee savedEmployee = employeeRepository.save(employee);
+        employeeMessageSender.send(savedEmployee);
+        return ResponseEntity.ok(employee);
     }
 
     public Queue<Employee> addAll(Queue<Employee> employees) {

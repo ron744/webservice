@@ -2,7 +2,7 @@ package com.webservice.luxoft.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.webservice.luxoft.ecxeption.LoadingException;
-import com.webservice.luxoft.model.EmployeeRequest;
+import com.webservice.luxoft.model.Employee;
 import com.webservice.luxoft.model.ShellEmployee;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +43,8 @@ public class EmployeeLoadService {
 
                     try {
                         shellEmployee = employeeQueue.take();
-                        EmployeeRequest employeeRequest = shellEmployee.getEmployeeRequest();
-                        employeeCrud.add(employeeRequest);
+                        Employee employee = shellEmployee.getEmployee();
+                        employeeCrud.add(employee);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         log.error("Exception while taking employees from queue...", e);
@@ -83,13 +83,13 @@ public class EmployeeLoadService {
                 xr.next();
                 if (xr.getEventType() == START_ELEMENT) {
                     if (EMPLOYEE.equals(xr.getLocalName())) {
-                        EmployeeRequest employeeRequest = null;
+                        Employee employee = null;
                         try {
-                            employeeRequest = xm.readValue(xr, EmployeeRequest.class);
+                            employee = xm.readValue(xr, Employee.class);
                         } catch (IOException e) {
                             exceptionList.add(e);
                         }
-                        ShellEmployee shellEmployee = new ShellEmployee(uuid, employeeRequest);
+                        ShellEmployee shellEmployee = new ShellEmployee(uuid, employee);
                         employeeQueue.put(shellEmployee);
                     }
                 }
